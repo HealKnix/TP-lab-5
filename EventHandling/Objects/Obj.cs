@@ -19,18 +19,20 @@
 				label.Text = $"Очки: {Form1.score}";
 				richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\nИгрок пересекся с {this}\n";
 			}
-			if (player.bullet != null && player.bullet.OverlapsCircle(this)) {
-				this.SetPos(
-					new Random().Next((int)this.originR, (int)(pbMain.Width - this.originR)),
-					new Random().Next((int)this.originR, (int)(pbMain.Height - this.originR))
-				);
-				if (player.inShadow) {
-					Form1.score += 2;
-				} else {
-					Form1.score++;
+			for (int i = 0; i < player.bullets.Count; i++) {
+				if (player.bullets[i].OverlapsCircle(this)) {
+					this.SetPos(
+						new Random().Next((int)this.originR, (int)(pbMain.Width - this.originR)),
+						new Random().Next((int)this.originR, (int)(pbMain.Height - this.originR))
+					);
+					if (player.inShadow) {
+						Form1.score += 2;
+					} else {
+						Form1.score++;
+					}
+					label.Text = $"Очки: {Form1.score}";
+					richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\nПуля пересеклась с {this}\n";
 				}
-				label.Text = $"Очки: {Form1.score}";
-				richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\nПуля пересеклась с {this}\n";
 			}
 
 			this.r -= 0.15f;
@@ -40,7 +42,7 @@
 					new Random().Next((int)this.originR, (int)(pbMain.Width - this.originR)),
 					new Random().Next((int)this.originR, (int)(pbMain.Height - this.originR))
 				);
-				// richTextBox1.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\n{this} обновился\n";
+				richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\n{this} обновился\n";
 			}
 		}
 
@@ -70,9 +72,9 @@
 			);
 			g.DrawString(
 				((int)this.r).ToString(),
-				new Font("Verdana", 8), // шрифт и размер
-				new SolidBrush(Color.Green), // цвет шрифта
-				this.x + this.r, this.y + this.r // точка в которой нарисовать текст
+				new Font("Verdana", 8),
+				new SolidBrush(Color.Green),
+				this.x + this.r, this.y + this.r
 			);
 		}
 	}

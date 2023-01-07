@@ -45,9 +45,11 @@ namespace EventHandling {
 			player.Update(marker, shadow, pbMain);
 			player.Render(g);
 
-			if (player.bullet != null) {
-				g.Transform = player.bullet.GetTransform();
-				player.bullet.Render(g);
+			if (player.bullets != null) {
+				for (int i = 0; i < player.bullets.Count; i++) {
+					g.Transform = player.bullets[i].GetTransform();
+					player.bullets[i].Render(g);
+				}
 			}
 		}
 
@@ -73,8 +75,6 @@ namespace EventHandling {
 			if (e.KeyCode == Keys.Space) {
 				player.Shoot();
 				e.SuppressKeyPress = true;
-				SoundPlayer soundPlayer = new SoundPlayer("shoot.wav");
-				soundPlayer.Play();
 			}
 		}
 	}

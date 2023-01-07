@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Media;
+using System.Numerics;
 
 namespace EventHandling.Objects {
 	internal class Bullet : BaseObject {
@@ -43,7 +44,9 @@ namespace EventHandling.Objects {
 		public float dy;
 		public float vX;
 		public float vY;
-		public Bullet? bullet;
+		public bool shoot = true;
+		public float shootDelay = 5f;
+		public List<Bullet> bullets = new List<Bullet>();
 
 		public Player(float x, float y, float r, float angle) : base(x, y, angle) {
 			this.r = r;
@@ -67,6 +70,12 @@ namespace EventHandling.Objects {
 
 		public void Update(Marker marker, Shadow shadow, PictureBox pbMain) {
 			this.inShadow = shadow.OverlapsRect(this);
+			if (shootDelay <= 0) {
+				this.shoot = true;
+				this.shootDelay = 5f;
+			} else if (!shoot) {
+				this.shootDelay -= 0.1f;
+			}
 
 			this.dx = marker.x - this.x;
 			this.dy = marker.y - this.y;
@@ -89,9 +98,17 @@ namespace EventHandling.Objects {
 				this.dy = 0;
 			}
 
-			if (this.bullet != null) {
-				this.bullet.x += this.bullet.dx * 15f;
-				this.bullet.y += this.bullet.dy * 15f;
+			for (int i = 0; i < bullets.Count; i++) {
+				this.bullets[i].x += this.bullets[i].dx * 15f;
+				this.bullets[i].y += this.bullets[i].dy * 15f;
+
+				if (this.bullets[i].x >= pbMain.Width || this.bullets[i].x + this.bullets[i].r <= 0) {
+					bullets.Remove(bullets[i]);
+					break;
+				} else if (this.bullets[i].y <= 0 || this.bullets[i].y + this.bullets[i].r >= pbMain.Height) {
+					bullets.Remove(bullets[i]);
+					break;
+				}
 			}
 
 			this.vX += -this.vX * 0.1f;
@@ -114,10 +131,15 @@ namespace EventHandling.Objects {
 		}
 
 		public void Shoot() {
-			bullet = new Bullet(this.x, this.y, 7.5f, 0) {
-				dx = this.dx == 0 ? MathF.Cos((this.angle * MathF.PI) / 180) : this.dx,
-				dy = this.dy == 0 ? MathF.Sin((this.angle * MathF.PI) / 180) : this.dy
-			};
+			if (this.shoot) {
+				this.shoot = false;
+				bullets.Add(new Bullet(this.x, this.y, 7.5f, 0) {
+					dx = this.dx == 0 ? MathF.Cos((this.angle * MathF.PI) / 180) : this.dx,
+					dy = this.dy == 0 ? MathF.Sin((this.angle * MathF.PI) / 180) : this.dy
+				});
+				SoundPlayer soundPlayer = new SoundPlayer("shoot.wav");
+				soundPlayer.Play();
+			}
 		}
 
 		public override void Render(Graphics g) {
@@ -127,6 +149,14 @@ namespace EventHandling.Objects {
 			} else {
 				this.color = Color.DeepSkyBlue;
 				g.DrawImage(Image.FromFile(Environment.CurrentDirectory + @$"\src\tank.png"), new Point((int)-r, (int)-r));
+			}
+			if (!this.shoot) {
+				g.DrawString(
+					((int)this.shootDelay).ToString(),
+					new Font("Verdana", 8),
+					new SolidBrush(Color.Green),
+					this.r, this.r
+				);
 			}
 		}
 	}
