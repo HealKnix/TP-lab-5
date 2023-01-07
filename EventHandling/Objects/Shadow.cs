@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventHandling.Objects {
+﻿namespace EventHandling.Objects {
 	internal class Shadow : BaseObject {
 		public float width;
 		public float height;
@@ -15,19 +8,25 @@ namespace EventHandling.Objects {
 			this.height = height;
 		}
 
+		public void Update(PictureBox pbMain) {
+			if (this.x > pbMain.Width) {
+				this.x = -this.width;
+			}
+			this.x += 2;
+		}
+
 		public bool OverlapsRect(BaseObject obj) {
-			if (obj.x + obj.r > x && obj.x - obj.r < x + width) {
+			if (obj.x + obj.r > this.x && obj.x - obj.r < this.x + this.width) {
 				return true;
 			}
-
 			return false;
 		}
 
 		public override void Render(Graphics g) {
 			g.FillRectangle(
 				new SolidBrush(Color.Black),
-				x, y,
-				width, height
+				this.x, this.y,
+				this.width, this.height
 			);
 		}
 	}

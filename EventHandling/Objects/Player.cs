@@ -1,13 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Numerics;
 
 namespace EventHandling.Objects {
 	internal class Bullet : BaseObject {
@@ -26,25 +17,24 @@ namespace EventHandling.Objects {
 			if (length < this.r + obj.r) {
 				return true;
 			}
-
 			return false;
 		}
 
 		public override void Render(Graphics g) {
-			if (inShadow) {
-				color = Color.Yellow;
+			if (this.inShadow) {
+				this.color = Color.Yellow;
 			} else {
-				color = Color.Orange;
+				this.color = Color.Orange;
 			}
 			g.FillEllipse(
-				new SolidBrush(color),
-				-r, -r,
-				r*2, r*2
+				new SolidBrush(this.color),
+				-this.r, -this.r,
+				this.r *2, this.r *2
 			);
 			g.DrawEllipse(
 				new Pen(Color.Black, 2),
-				-r, -r,
-				r * 2, r * 2
+				-this.r, -this.r,
+				this.r * 2, this.r * 2
 			);
 		}
 	}
@@ -53,7 +43,7 @@ namespace EventHandling.Objects {
 		public float dy;
 		public float vX;
 		public float vY;
-		public Bullet bullet;
+		public Bullet? bullet;
 
 		public Player(float x, float y, float r, float angle) : base(x, y, angle) {
 			this.r = r;
@@ -67,7 +57,7 @@ namespace EventHandling.Objects {
 			this.dx = obj.x - this.x;
 			this.dy = obj.y - this.y;
 
-			float length = MathF.Sqrt(dx * dx + dy * dy);
+			float length = MathF.Sqrt(this.dx * this.dx + this.dy * this.dy);
 			if (length < this.r + obj.r) {
 				return true;
 			}
@@ -75,18 +65,67 @@ namespace EventHandling.Objects {
 			return false;
 		}
 
+		public void Update(Marker marker, Shadow shadow, PictureBox pbMain) {
+			this.inShadow = shadow.OverlapsRect(this);
+
+			this.dx = marker.x - this.x;
+			this.dy = marker.y - this.y;
+
+			float length = MathF.Sqrt(this.dx * this.dx + this.dy * this.dy);
+
+			if (length > marker.r / 2) {
+				this.dx /= length;
+				this.dy /= length;
+
+				this.vX += this.dx * 0.5f;
+				this.vY += this.dy * 0.5f;
+
+				this.angle = 90 - MathF.Atan2(this.vX, this.vY) * 180 / MathF.PI;
+			} else {
+				marker.isExist = false;
+				marker.x = this.x;
+				marker.y = this.y;
+				this.dx = 0;
+				this.dy = 0;
+			}
+
+			if (this.bullet != null) {
+				this.bullet.x += this.bullet.dx * 15f;
+				this.bullet.y += this.bullet.dy * 15f;
+			}
+
+			this.vX += -this.vX * 0.1f;
+			this.vY += -this.vY * 0.1f;
+
+			this.x += this.vX;
+			this.y += this.vY;
+
+			if (this.x - this.r < 0) {
+				this.x = this.r;
+			} else if (this.x + this.r > pbMain.Width) {
+				this.x = pbMain.Width - this.r;
+			}
+
+			if (this.y - this.r < 0) {
+				this.y = this.r;
+			} else if (this.y + this.r > pbMain.Height) {
+				this.y = pbMain.Height - this.r;
+			}
+		}
+
 		public void Shoot() {
-			bullet = new Bullet(this.x, this.y, 7.5f, 0);
-			bullet.dx = this.dx == 0 ? MathF.Cos((this.angle * MathF.PI) / 180) : this.dx;
-			bullet.dy = this.dy == 0 ? MathF.Sin((this.angle * MathF.PI) / 180) : this.dy;
+			bullet = new Bullet(this.x, this.y, 7.5f, 0) {
+				dx = this.dx == 0 ? MathF.Cos((this.angle * MathF.PI) / 180) : this.dx,
+				dy = this.dy == 0 ? MathF.Sin((this.angle * MathF.PI) / 180) : this.dy
+			};
 		}
 
 		public override void Render(Graphics g) {
-			if (inShadow) {
-				color = Color.White;
+			if (this.inShadow) {
+				this.color = Color.White;
 				g.DrawImage(Image.FromFile(Environment.CurrentDirectory + @$"\src\tank_shadow.png"), new Point((int)-r, (int)-r));
 			} else {
-				color = Color.DeepSkyBlue;
+				this.color = Color.DeepSkyBlue;
 				g.DrawImage(Image.FromFile(Environment.CurrentDirectory + @$"\src\tank.png"), new Point((int)-r, (int)-r));
 			}
 		}

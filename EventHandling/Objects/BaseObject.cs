@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing.Drawing2D;
 
 namespace EventHandling.Objects {
 	internal class BaseObject {
@@ -21,7 +15,7 @@ namespace EventHandling.Objects {
 			this.y = y;
 			this.angle = angle;
 			this.inShadow = false;
-			color = Color.Yellow;
+			this.color = Color.Yellow;
 		}
 
 		public void SetPos(float x, float y) {

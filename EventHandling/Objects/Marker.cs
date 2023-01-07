@@ -1,40 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EventHandling.Objects {
+﻿namespace EventHandling.Objects {
 	internal class Marker : BaseObject {
 		public bool isExist;
+
 		public Marker(float x, float y, float r, float angle) : base(x, y, angle) {
 			this.r = r;
 			this.isExist = false;
 		}
 
+		public new void SetPos(float x, float y) {
+			this.isExist = true;
+			this.x = x;
+			this.y = y;
+		}
+
 		public override void Render(Graphics g) {
 			if (inShadow) {
-				color = Color.White;
+				this.color = Color.White;
 			} else {
-				color = Color.Red;
+				this.color = Color.Red;
 			}
 
 			g.DrawEllipse(
-				new Pen(color, 2),
-				-r, -r,
-				r*2, r*2
+				new Pen(this.color, 2),
+				-this.r, -this.r,
+				this.r *2, this.r *2
 			);
 			g.DrawEllipse(
-				new Pen(color, 2),
-				-r/2f, -r/2f,
-				r, r
+				new Pen(this.color, 2),
+				-this.r /2f, -this.r /2f,
+				this.r, this.r
 			);
 			g.DrawEllipse(
-				new Pen(color, 2),
-				-r/ 5f, -r/5f,
-				r/2.5f, r/2.5f
+				new Pen(this.color, 2),
+				-this.r / 5f, -this.r /5f,
+				this.r /2.5f, this.r /2.5f
 			);
 		}
 	}
