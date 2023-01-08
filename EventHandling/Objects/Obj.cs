@@ -1,11 +1,13 @@
 ﻿namespace EventHandling.Objects {
 	internal class Obj : BaseObject {
+		public float originR;
+
 		public Obj(float x, float y, float r, float angle) : base(x, y, angle) {
 			this.r = r;
 			this.originR = r;
 		}
 
-		public void Update(Player player, PictureBox pbMain, Label label, RichTextBox richTextBox) {
+		public void Update(Player player, PictureBox pbMain, RichTextBox richTextBox) {
 			if (player.OverlapsCircle(this)) {
 				SetPos(
 					new Random().Next((int)this.originR, (int)(pbMain.Width - this.originR)),
@@ -16,7 +18,6 @@
 				} else {
 					Form1.score++;
 				}
-				label.Text = $"Очки: {Form1.score}";
 				richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\nИгрок пересекся с {this}\n";
 			}
 			for (int i = 0; i < player.bullets.Count; i++) {
@@ -30,13 +31,11 @@
 					} else {
 						Form1.score++;
 					}
-					label.Text = $"Очки: {Form1.score}";
 					richTextBox.Text += $"[{DateTime.Now:HH:mm:ss:ff}]\nПуля пересеклась с {this}\n";
 				}
 			}
 
 			this.r -= 0.15f;
-
 			if (this.r < 0) {
 				SetPos(
 					new Random().Next((int)this.originR, (int)(pbMain.Width - this.originR)),
@@ -49,12 +48,6 @@
 		public new void SetPos(float x, float y) {
 			this.x = x;
 			this.y = y;
-			this.r = this.originR;
-		}
-
-		public virtual void ReSpawn(float width, float height) {
-			this.x = (new Random()).Next((int)this.r * 2, (int)(width - this.r * 2));
-			this.y = (new Random()).Next((int)this.r * 2, (int)(height - this.r * 2));
 			this.r = this.originR;
 		}
 

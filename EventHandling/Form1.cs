@@ -36,6 +36,8 @@ namespace EventHandling {
 
 			ObjRender(g);
 
+			label1.Text = $"Очки: {score}";
+
 			if (marker.isExist) {
 				g.Transform = marker.GetTransform();
 				marker.Render(g);
@@ -55,7 +57,7 @@ namespace EventHandling {
 
 		private void ObjRender(Graphics g) {
 			for (int i = 0; i < obj.Count; i++) {
-				obj[i].Update(player, pbMain, label1, richTextBox1);
+				obj[i].Update(player, pbMain, richTextBox1);
 				obj[i].inShadow = shadow.OverlapsRect(obj[i]);
 				obj[i].Render(g);
 			}

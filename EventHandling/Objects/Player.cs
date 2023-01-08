@@ -1,4 +1,5 @@
-﻿using System.Media;
+﻿using System.DirectoryServices.ActiveDirectory;
+using System.Media;
 using System.Numerics;
 
 namespace EventHandling.Objects {
@@ -154,7 +155,7 @@ namespace EventHandling.Objects {
 				g.DrawString(
 					((int)this.shootDelay).ToString(),
 					new Font("Verdana", 8),
-					new SolidBrush(Color.Green),
+					new SolidBrush(Color.Red),
 					this.r, this.r
 				);
 			}

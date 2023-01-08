@@ -4,7 +4,6 @@ namespace EventHandling.Objects {
 	internal class BaseObject {
 		public float x;
 		public float y;
-		public float originR;
 		public float r;
 		public bool inShadow;
 		public float angle;
